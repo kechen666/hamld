@@ -1,0 +1,64 @@
+
+# 忽略日志目录
+logs/
+
+# 忽略 Python 的 bytecode 文件
+*.pyc
+__pycache__/
+
+# 忽略hatchling构建得到的文件
+/dist
+
+# 忽略pytest产生的文件
+/.pytest_cache
+
+*.log
+
+
+# 后续生成的dat以及dem不上传到gitlab中。
+*.dat
+*.dem
+
+# 部分内部的实验图片以及CSV文件，不上传到gitlab中。pdf支持上传。
+*.png
+*.jpg
+*.jpeg
+*.bmp
+*.csv
+
+# 弃用的代码
+deprecation_code/
+
+# 部分数据静止上传
+tesseract-decoder-data/
+google23/
+google24/
+experiment_1_surface_code_fault_tolerance_threshold/
+experiment_2_surface_code_error_suppression_factor/
+experiment_3_surface_code_speed/
+experiment_4_mwpm_error/
+experiment_5_approx_mld/
+# paper_experiment_bb_codes/
+paper_experiment_ft_threshold/
+raw/
+mutil_round_varying/
+
+# 忽略vscode的缓存文件
+.vscode/
+
+
+# 不上传部分文件
+/tests/test_approx_contraction_performance.ipynb
+/tests/test_contraction-old.ipynb
+exp5_result/
+labs/
+paper_experiment/
+
+# 不上传部分随便测试的代码
+**/contraction_implementation.ipynb
+**/contraction_implementation.py
+**/circuit_noisy_si1000_no_stabilizer.ipynb
+**/expectation_benchmark_accurate_debug.ipynb
+**/Parallel_batch_test.ipynb
+**/parallel_mld.ipynb
+**/contraction_high_performance.ipynb

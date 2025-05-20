@@ -1,0 +1,45 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/eamld/__init__.py"
+
+[project]
+name = "eamld"
+dynamic = ["version"]
+license = {text = "MIT"}  # license
+authors = [
+  {name="Ke Chen"}
+]
+description = "Circuit-level quantum error decoding using Efficient Approximate Maximum Likelihood (EAMLD)"
+readme = "README.md"
+requires-python = ">=3.10,<3.11"
+dependencies = [
+    "stim",
+    "sinter",
+    "numpy",
+    "networkx",
+    "matplotlib",
+    "pandas",
+    "multiprocessing",
+    "jupyter"
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+
+[project.urls]
+Homepage = "https://github.com/kechen666/eamld.git"
+Issues = "https://github.com/kechen666/eamld/issues"
+
+[tool.hatch.build]
+# 包含所有 .so 文件
+include = [
+    "src/eamld/*.so"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/eamld"]
