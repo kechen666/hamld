@@ -30,9 +30,9 @@ __pycache__/
 deprecation_code/
 
 # 部分数据静止上传
-tesseract-decoder-data/
-google23/
-google24/
+# tesseract-decoder-data/
+# google23/
+# google24/
 experiment_1_surface_code_fault_tolerance_threshold/
 experiment_2_surface_code_error_suppression_factor/
 experiment_3_surface_code_speed/
