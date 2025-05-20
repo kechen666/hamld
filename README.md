@@ -168,4 +168,5 @@ xxxxx
 * [PyMatching](https://github.com/oscarhiggott/PyMatching/tree/master)
 * [LDPC](https://github.com/quantumgizmos/ldpc)
 * [stimbposd](https://github.com/oscarhiggott/stimbposd)
+* [tesseract-decoder](https://github.com/quantumlib/tesseract-decoder)
 * [qtcodes](https://github.com/yaleqc/qtcodes)
