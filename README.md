@@ -1,4 +1,4 @@
-# EAMLD (Efficient Approximate Maximum Likelihood Decoding)
+# HAMLD (hypergraph-based approximate maximum likelihood decoding)
 
 * [What is EAMLD?](#1)
 * [How do I use EAMLD?](#2)
