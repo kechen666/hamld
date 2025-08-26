@@ -18,4 +18,7 @@ The `data` directory contains two main types of datasets:
    - `xxx_detector_generator`: Tools for constructing detector error models (DEM).  
    - `xxx_circuit_sample_generator`: Utilities for sampling quantum circuits.  
 
+3. raw data
+   - stim tool: The stim tool is used to generate the stim files.
+
 For more details, refer to the respective subdirectories.

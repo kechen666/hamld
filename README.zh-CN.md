@@ -1,15 +1,15 @@
-# EAMLD (Efficient Approximate Maximum Likelihood Decoding)
+# HAMLD (Efficient Approximate Maximum Likelihood Decoding)
 
-- [What is EAMLD?](#1?)
+- [What is HAMLD?](#1?)
 
-- [How do I use EAMLD?](#2)
-- [How does EAMLD work?](#3)
-- [How do I cite EAMLD?](#4)
+- [How do I use HAMLD?](#2)
+- [How does HAMLD work?](#3)
+- [How do I cite HAMLD?](#4)
 
 <a id="1"></a>
 
-## What is EAMLD?
-EAMLD (Efficient Approximate Maximum Likelihood Decoding) 是一种针对量子纠错码(QEC)的创新型解码器，专为处理电路级噪声模型的高精度解码而设计。该解码器通过以下关键技术实现高效解码：
+## What is HAMLD?
+HAMLD (Efficient Approximate Maximum Likelihood Decoding) 是一种针对量子纠错码(QEC)的创新型解码器，专为处理电路级噪声模型的高精度解码而设计。该解码器通过以下关键技术实现高效解码：
 
 核心技术创新:
 - 支持任意纠错码和噪声。支持任意可通过stim含噪线路构建的纠错码，包括stim尚未实现的偏置测量噪声等特殊噪声模型
@@ -27,15 +27,15 @@ EAMLD (Efficient Approximate Maximum Likelihood Decoding) 是一种针对量子�
 
 <a id="2"></a>
 
-## How do I use EAMLD?
+## How do I use HAMLD?
 
 ### 安装说明
-当前 EAMLD 仅支持本地安装，请按照以下步骤进行操作：
+当前 HAMLD 仅支持本地安装，请按照以下步骤进行操作：
 
 1. 创建 Python 虚拟环境（推荐使用 Anaconda）
 ```bash
-conda create -n eamld python=3.10
-conda activate eamld
+conda create -n hamld python=3.10
+conda activate hamld
 ```
 
 2. 安装构建工具
@@ -53,13 +53,13 @@ hatch build  # 生成构建包，输出至 dist/ 目录
 ```bash
 pip install -e .  # 开发模式安装
 # 或
-pip install ./dist/eamld-0.0.1-py3-none-any.whl  # 直接安装构建包
+pip install ./dist/hamld-0.0.1-py3-none-any.whl  # 直接安装构建包
 ```
 
 ### 验证安装
 安装完成后，您可以通过以下方式验证：
 ```python
-import eamld  # 确认可正常导入
+import hamld  # 确认可正常导入
 ```
 
 ### 示例代码
@@ -76,8 +76,8 @@ model = circuit.detector_error_model(decompose_errors=False, flatten_loops=True)
 sampler = circuit.compile_detector_sampler()
 syndrome, actual_observables = sampler.sample(shots=num_shots, separate_observables=True)
 
-import eamld
-mld_decoder = eamld.EAMLD(detector_error_model=model, order_method='mld', slice_method='no_slice')
+import hamld
+mld_decoder = hamld.HAMLD(detector_error_model=model, order_method='mld', slice_method='no_slice')
 predicted_observables = mld_decoder.decode_batch(syndrome)
 num_mistakes = np.sum(np.any(predicted_observables != actual_observables, axis=1))
 
@@ -86,30 +86,30 @@ print(f"{num_mistakes}/{num_shots}")
 
 ### 快速上手
 我们提供了详细的教程指南：
-- 运行 `EAMLD_Tutorial.ipynb` 教程文件
+- 运行 `HAMLD_Tutorial.ipynb` 教程文件
 - 参考教程中的示例代码进行功能测试
-- 探索 `eamld` 包的README.md文档，了解更多功能和用法
+- 探索 `hamld` 包的README.md文档，了解更多功能和用法
 
 <a id="3"></a>
 
-## How does EAMLD work?
-基于EAMLD的研究论文，该解码器相较于传统MLD解码器及其他解码方案具有以下显著优势：
+## How does HAMLD work?
+基于HAMLD的研究论文，该解码器相较于传统MLD解码器及其他解码方案具有以下显著优势：
 
 1. 近似策略的高扩展性
-EAMLD采用创新的近似策略实现高效解码，其时间复杂度为O(rd²+C)，其中：
+HAMLD采用创新的近似策略实现高效解码，其时间复杂度为O(rd²+C)，其中：
 - r表示解码重复轮次
 - d为码距参数
 - C是与近似噪声相关的常数项
 通过优化参数配置，特别是调整C值，可以进一步显著提升解码速度。
 
 2. 逼近MLD的解码精度
-在基于辅助比特的syndrome解码场景中，EAMLD表现出：
+在基于辅助比特的syndrome解码场景中，HAMLD表现出：
 - 解码精度显著优于MWPM和BP+OSD等传统方法
 - 在surface code解码任务中，达到接近MLD的最优解码性能
 （注：在QLDPC code场景下，由于无法精确定义MLD基准，故不进行直接比较）
 
 3. 测量偏置噪声的适应性
-针对实际量子系统中存在的测量偏置噪声（即0/1测量错误率不对称现象），EAMLD设计了专门的噪声处理机制。这一特性在当前主流的stim模拟器及多数解码器中尚未实现。
+针对实际量子系统中存在的测量偏置噪声（即0/1测量错误率不对称现象），HAMLD设计了专门的噪声处理机制。这一特性在当前主流的stim模拟器及多数解码器中尚未实现。
 
 ### 其他工具
 我们还撰写了相关代码：
@@ -122,8 +122,8 @@ EAMLD采用创新的近似策略实现高效解码，其时间复杂度为O(rd²
 
 <a id="4"></a>
 
-## How do I cite EAMLD?
-使用 EAMLD 进行研究时，请引用：
+## How do I cite HAMLD?
+使用 HAMLD 进行研究时，请引用：
 ```bibtex
 xxxxx
 ```

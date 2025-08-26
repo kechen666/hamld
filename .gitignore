@@ -1,6 +1,7 @@
 
 # 忽略日志目录
 logs/
+log/
 
 # 忽略 Python 的 bytecode 文件
 *.pyc
@@ -25,11 +26,15 @@ __pycache__/
 *.jpeg
 *.bmp
 *.csv
+*.data
+
+# 忽略编译的代码。
+*.so
 
 # 弃用的代码
 deprecation_code/
 
-# 部分数据静止上传
+# 论文无关的数据不上传或者下载
 # tesseract-decoder-data/
 # google23/
 # google24/
@@ -40,7 +45,7 @@ experiment_4_mwpm_error/
 experiment_5_approx_mld/
 # paper_experiment_bb_codes/
 paper_experiment_ft_threshold/
-raw/
+# raw/
 mutil_round_varying/
 
 # 忽略vscode的缓存文件

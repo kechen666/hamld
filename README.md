@@ -1,23 +1,23 @@
 # HAMLD (hypergraph-based approximate maximum likelihood decoding)
 
-* [What is EAMLD?](#1)
-* [How do I use EAMLD?](#2)
-* [How does EAMLD work?](#3)
-* [How do I cite EAMLD?](#4)
+* [What is HAMLD?](#1)
+* [How do I use HAMLD?](#2)
+* [How does HAMLD work?](#3)
+* [How do I cite HAMLD?](#4)
 
 <a id="1"></a>
 
-## What is EAMLD?
+## What is HAMLD?
 
-EAMLD (Efficient Approximate Maximum Likelihood Decoding) is an innovative decoder designed for quantum error-correcting codes (QEC), specifically optimized for high-accuracy decoding under circuit-level noise models. It achieves efficient decoding through the following core innovations:
+HAMLD (Efficient Approximate Maximum Likelihood Decoding) is an innovative decoder designed for quantum error-correcting codes (QEC), specifically optimized for high-accuracy decoding under circuit-level noise models. It achieves efficient decoding through the following core innovations:
 
 ### Core Innovations:
 
 * **Support for arbitrary QEC codes and noise models**
-  EAMLD supports any QEC code expressible via `stim` noisy circuits, including advanced noise types like biased measurement noise not yet supported by `stim`.
+  HAMLD supports any QEC code expressible via `stim` noisy circuits, including advanced noise types like biased measurement noise not yet supported by `stim`.
 
 * **Approximation-based acceleration**
-  EAMLD applies hypergraph and contraction approximations to remove decoding-irrelevant computational overhead, significantly speeding up decoding while maintaining accuracy.
+  HAMLD applies hypergraph and contraction approximations to remove decoding-irrelevant computational overhead, significantly speeding up decoding while maintaining accuracy.
 
 * **Optimized contraction order**
   Advanced contraction order algorithms reduce decoding complexity without compromising accuracy.
@@ -28,27 +28,27 @@ EAMLD (Efficient Approximate Maximum Likelihood Decoding) is an innovative decod
   Reduces the exponential complexity of traditional MLD decoders to a polynomial scale.
 
 * **Higher decoding accuracy**
-  In scenarios using only ancilla qubit measurements (non-destructive error correction), EAMLD significantly outperforms traditional decoders such as MWPM and BP+OSD in terms of logical error rate.
+  In scenarios using only ancilla qubit measurements (non-destructive error correction), HAMLD significantly outperforms traditional decoders such as MWPM and BP+OSD in terms of logical error rate.
 
 ### Current Limitations:
 
 * For **surface codes with data qubit measurement syndromes**, accuracy improvement over MWPM is limited, though still favorable.
-* For **QLDPC codes with data qubit syndrome**, EAMLD may not outperform BP+OSD in accuracy, but provides lower decoding complexity.
+* For **QLDPC codes with data qubit syndrome**, HAMLD may not outperform BP+OSD in accuracy, but provides lower decoding complexity.
 * **Real-time decoding** requirements for superconducting quantum processors are not yet fully met.
 
 <a id="2"></a>
 
-## How do I use EAMLD?
+## How do I use HAMLD?
 
 ### Installation
 
-Currently, EAMLD supports **local installation only**. Follow these steps:
+Currently, HAMLD supports **local installation only**. Follow these steps:
 
 1. **Create a Python virtual environment** (Anaconda recommended):
 
 ```bash
-conda create -n eamld python=3.10
-conda activate eamld
+conda create -n hamld python=3.10
+conda activate hamld
 ```
 
 2. **Install build tools**
@@ -69,7 +69,7 @@ Choose one of the installation methods:
 ```bash
 pip install -e .  # Development mode
 # OR
-pip install ./dist/eamld-0.0.1-py3-none-any.whl  # Install from build
+pip install ./dist/hamld-0.0.1-py3-none-any.whl  # Install from build
 ```
 
 ### Verify Installation
@@ -77,7 +77,7 @@ pip install ./dist/eamld-0.0.1-py3-none-any.whl  # Install from build
 Check that the package is properly installed:
 
 ```python
-import eamld  # Should import without error
+import hamld  # Should import without error
 ```
 
 ### Example Code
@@ -98,9 +98,9 @@ model = circuit.detector_error_model(decompose_errors=False, flatten_loops=True)
 sampler = circuit.compile_detector_sampler()
 syndrome, actual_observables = sampler.sample(shots=num_shots, separate_observables=True)
 
-# Decode using EAMLD
-import eamld
-mld_decoder = eamld.EAMLD(detector_error_model=model, order_method='mld', slice_method='no_slice')
+# Decode using HAMLD
+import hamld
+mld_decoder = hamld.HAMLD(detector_error_model=model, order_method='mld', slice_method='no_slice')
 predicted_observables = mld_decoder.decode_batch(syndrome)
 num_mistakes = np.sum(np.any(predicted_observables != actual_observables, axis=1))
 
@@ -111,19 +111,19 @@ print(f"{num_mistakes}/{num_shots}")
 
 We provide detailed tutorials to help you get started:
 
-* Run the `EAMLD_Tutorial.ipynb` notebook
+* Run the `HAMLD_Tutorial.ipynb` notebook
 * Explore and test the API via example code
-* Refer to the `eamld` package’s `README.md` for full documentation
+* Refer to the `hamld` package’s `README.md` for full documentation
 
 <a id="3"></a>
 
-## How does EAMLD work?
+## How does HAMLD work?
 
-Based on the underlying research, EAMLD offers several key advantages over traditional MLD decoders and other decoding approaches:
+Based on the underlying research, HAMLD offers several key advantages over traditional MLD decoders and other decoding approaches:
 
 ### 1. Scalable Approximation Strategies
 
-EAMLD uses innovative approximations to achieve efficient decoding, with a time complexity of
+HAMLD uses innovative approximations to achieve efficient decoding, with a time complexity of
 **O(rd² + C)**, where:
 
 * `r` is the number of rounds
@@ -136,18 +136,18 @@ This enables scalable performance improvements through parameter tuning.
 
 In ancilla-only syndrome decoding (non-destructive error correction):
 
-* EAMLD achieves **higher accuracy** than MWPM and BP+OSD
-* For surface codes, EAMLD reaches **near-optimal decoding performance**, close to full MLD
+* HAMLD achieves **higher accuracy** than MWPM and BP+OSD
+* For surface codes, HAMLD reaches **near-optimal decoding performance**, close to full MLD
 * (Note: For QLDPC codes, full MLD baselines are not well-defined, so no direct comparison is made.)
 
 ### 3. Adaptability to Biased Measurement Noise
 
-EAMLD features a dedicated mechanism for handling **measurement bias**, i.e., asymmetric 0/1 measurement error rates—a feature lacking in many existing decoders and even in `stim`.
+HAMLD features a dedicated mechanism for handling **measurement bias**, i.e., asymmetric 0/1 measurement error rates—a feature lacking in many existing decoders and even in `stim`.
 
 ### Additional Tools
 
 * **Hypergraph-based DEM analysis**
-  EAMLD includes a novel visual and structural analysis tool using hypergraph and connectivity graph representations of detector error models.
+  HAMLD includes a novel visual and structural analysis tool using hypergraph and connectivity graph representations of detector error models.
 
 * **Noisy quantum circuit generator**
   Currently supports surface code noise circuits via `stim`. Future support for other QEC codes is planned.
@@ -159,9 +159,9 @@ EAMLD features a dedicated mechanism for handling **measurement bias**, i.e., as
 
 * Matrixize the calculation process and add parallel and vectorized calculations to achieve acceleration. (To be completed)
 
-## How do I cite EAMLD?
+## How do I cite HAMLD?
 
-If you use EAMLD in your research, please cite:
+If you use HAMLD in your research, please cite:
 
 ```bibtex
 xxxxx

@@ -3,16 +3,16 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.version]
-path = "src/eamld/__init__.py"
+path = "src/hamld/__init__.py"
 
 [project]
-name = "eamld"
+name = "hamld"
 dynamic = ["version"]
 license = {text = "MIT"}  # license
 authors = [
   {name="Ke Chen"}
 ]
-description = "Circuit-level quantum error decoding using Efficient Approximate Maximum Likelihood (EAMLD)"
+description = "Circuit-level quantum error decoding using Hypergraph-based Approximate Maximum Likelihood (HAMLD)"
 readme = "README.md"
 requires-python = ">=3.10,<3.11"
 dependencies = [
@@ -32,14 +32,14 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/kechen666/eamld.git"
-Issues = "https://github.com/kechen666/eamld/issues"
+Homepage = "https://github.com/kechen666/hamld.git"
+Issues = "https://github.com/kechen666/hamld/issues"
 
 [tool.hatch.build]
 # 包含所有 .so 文件
 include = [
-    "src/eamld/*.so"
+    "src/hamld/*.so"
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/eamld"]
+packages = ["src/hamld"]
