@@ -12,9 +12,8 @@
 HAMLD (Efficient Approximate Maximum Likelihood Decoding) 是一种针对量子纠错码(QEC)的创新型解码器，专为处理电路级噪声模型的高精度解码而设计。该解码器通过以下关键技术实现高效解码：
 
 核心技术创新:
-- 支持任意纠错码和噪声。支持任意可通过stim含噪线路构建的纠错码，包括stim尚未实现的偏置测量噪声等特殊噪声模型
-- 近似加速。引入超图近似、收缩近似方法, 移除部分解码无关的计算代价, 在保证精度的前提下大幅提升速度
-- 优化收缩顺序加速。采用优化的收缩顺序算法，无损降低计算复杂度
+- 通用性强：支持任意纠错码和噪声模型，包括所有可通过 Stim 构建的含噪线路，以及 Stim 尚未实现的特殊噪声类型（如偏置测量噪声）。
+- 近似加速：引入超图近似与收缩近似方法，剔除部分与解码无关的计算开销，在保证精度的前提下显著提升速度，相比现有常用的 TN-MLD 方法更高效。
 
 性能优势分析：
 - 复杂度更低。将传统MLD解码器的指数级计算复杂度降至多项式级别
@@ -32,29 +31,80 @@ HAMLD (Efficient Approximate Maximum Likelihood Decoding) 是一种针对量子�
 ### 安装说明
 当前 HAMLD 仅支持本地安装，请按照以下步骤进行操作：
 
-1. 创建 Python 虚拟环境（推荐使用 Anaconda）
+创建 Python 虚拟环境（推荐使用 Anaconda）：
+
 ```bash
 conda create -n hamld python=3.10
 conda activate hamld
 ```
 
-2. 安装构建工具
-我们采用现代化的 pyproject.toml 构建方案，使用 hatch 作为构建工具：
+我们使用基于 **hatch** 的现代 `pyproject.toml` 构建系统。通过以下命令安装：
+
 ```bash
 pip install hatch -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
-3. 项目构建与安装
+首先，构建软件包：
+
 ```bash
-hatch build  # 生成构建包，输出至 dist/ 目录
+hatch build  # 将包构建到 dist/ 文件夹中
 ```
 
-安装方式任选其一：
+然后，选择以下一种安装方式：
+
 ```bash
-pip install -e .  # 开发模式安装
-# 或
-pip install ./dist/hamld-0.0.1-py3-none-any.whl  # 直接安装构建包
+pip install -e .  # 开发模式
+# 或者
+pip install ./dist/hamld-0.0.0-py3-none-any.whl  # 从构建文件安装
 ```
+
+对于拥有足够 CPU 和内存的 Linux 系统，推荐使用高性能解码。
+
+进入 C++ 源代码文件夹：
+
+```bash
+cd hamld/src/cpp
+```
+
+编译并测试（bazel的版本为8.2.1）：
+
+```bash
+bazel build //main:test_contraction_strategy
+
+./bazel-bin/main/test_contraction_strategy <项目根目录>/hamld/data/external/epmld_experiment_data/epmld_paper_experiment/overall_performance/surface_code/X/d3_r1/detector_error_model_si1000_p10_no_stabilizer.dem
+```
+
+> **注意：** 将 `<项目根目录>` 替换为你的项目根路径。使用 SSD 和多核 CPU 将显著提升编译和运行性能。
+
+安装 Bit Set 依赖项：
+
+```bash
+cd hamld/src/cpp
+mkdir -p bit_set && cd bit_set
+
+# 手动安装依赖项（未来可通过 http_archive 自动化）
+git clone https://github.com/abseil/abseil-cpp.git
+git clone https://github.com/Tessil/robin-map.git
+git clone https://github.com/martinus/robin-hood-hashing.git
+```
+
+编译 `hamld_pybind11`（Linux 示例）：
+
+```bash
+bazel build //main:hamld_pybind11
+
+ln -sf <项目根目录>/hamld/src/cpp/bazel-bin/main/hamld_pybind11.so <项目根目录>/hamld/src/hamld/hamld_pybind11.so
+```
+
+> 将 `<项目根目录>` 替换为你的项目根路径。高性能 CPU 和足够的内存有助于加快 pybind11 的编译速度。
+
+通过编辑 `hamld/src/hamld/__init__.py` 并取消注释来启用 Python API：
+
+```python
+from .hamld_pybind11 import HAMLDCpp_from_file
+```
+
+按照 `HAMLD_Tutorial.ipynb` 中的说明查看示例用法和解码器 API 调用。
 
 ### 验证安装
 安装完成后，您可以通过以下方式验证：

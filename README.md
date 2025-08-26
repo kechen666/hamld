@@ -74,7 +74,7 @@ Navigate to the C++ source folder:
 cd hamld/src/cpp
 ```
 
-Compile and test:
+Compile and test (bazel version is 8.2.1):
 
 ```bash
 bazel build //main:test_contraction_strategy
