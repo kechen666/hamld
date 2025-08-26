@@ -28,14 +28,14 @@ def generate_decomposed_detector_error_model(input_file_path, output_file_path):
 
 def main():
     code_tasks = ["bivariate_bicycle_code:rotated_memory_x", "bivariate_bicycle_code:rotated_memory_z"]
-    # nkds = [[72, 12, 6], [90, 8, 10], [108, 8, 10], [144, 12, 12]]
-    nkds = [[72, 12, 6], [90, 8, 10], [108, 8, 10], [144, 12, 12], [288, 12, 18], [360, 12, 24]]
+    nkds = [[72, 12, 6], [90, 8, 10], [108, 8, 10], [144, 12, 12]]
+    # nkds = [[72, 12, 6], [90, 8, 10], [108, 8, 10], [144, 12, 12], [288, 12, 18], [360, 12, 24]]
     # 固定p为10/10000，这是目前最先进超导硬件中数量级。
     probabilities = [10]
     noise_models = ["si1000"]
     # 只考虑没有数据比特信息的场景
-    # have_stabilizers = [False]
-    have_stabilizers = [True]
+    have_stabilizers = [False]
+    # have_stabilizers = [True]
 
     for code_task in code_tasks:
         folder = "Z" if "memory_z" in code_task else "X" if "memory_x" in code_task else "other"

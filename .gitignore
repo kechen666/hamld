@@ -18,7 +18,7 @@ __pycache__/
 
 # 后续生成的dat以及dem不上传到gitlab中。
 *.dat
-*.dem
+# *.dem
 
 # 部分内部的实验图片以及CSV文件，不上传到gitlab中。pdf支持上传。
 *.png
@@ -51,6 +51,10 @@ mutil_round_varying/
 # 忽略vscode的缓存文件
 .vscode/
 
+# 不上传其他的依赖子项目
+bit_set/
+# 不上传bazel的编译内容
+bazel-*
 
 # 不上传部分文件
 /tests/test_approx_contraction_performance.ipynb

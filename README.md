@@ -14,13 +14,10 @@ HAMLD (Efficient Approximate Maximum Likelihood Decoding) is an innovative decod
 ### Core Innovations:
 
 * **Support for arbitrary QEC codes and noise models**
-  HAMLD supports any QEC code expressible via `stim` noisy circuits, including advanced noise types like biased measurement noise not yet supported by `stim`.
+  Supports arbitrary quantum error-correcting codes and noise models, including all noise circuits constructible via Stim, as well as special noise types not yet implemented in Stim (e.g., biased measurement noise).
 
 * **Approximation-based acceleration**
-  HAMLD applies hypergraph and contraction approximations to remove decoding-irrelevant computational overhead, significantly speeding up decoding while maintaining accuracy.
-
-* **Optimized contraction order**
-  Advanced contraction order algorithms reduce decoding complexity without compromising accuracy.
+  Introduces hypergraph and contraction approximations to eliminate computational overhead unrelated to decoding. This significantly boosts speed while maintaining accuracy, achieving higher efficiency compared with commonly used TN-MLD methods.
 
 ### Performance Advantages:
 
@@ -42,35 +39,80 @@ HAMLD (Efficient Approximate Maximum Likelihood Decoding) is an innovative decod
 
 ### Installation
 
-Currently, HAMLD supports **local installation only**. Follow these steps:
-
-1. **Create a Python virtual environment** (Anaconda recommended):
+Create a Python virtual environment (Anaconda recommended):
 
 ```bash
 conda create -n hamld python=3.10
 conda activate hamld
 ```
 
-2. **Install build tools**
-   We use a modern `pyproject.toml` build system powered by `hatch`:
+We use a modern `pyproject.toml` build system powered by **hatch**. Install it with:
 
 ```bash
 pip install hatch -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
-3. **Build and install the project**
+First, build the package:
 
 ```bash
 hatch build  # Builds the package into the dist/ folder
 ```
 
-Choose one of the installation methods:
+Then, choose one of the installation methods:
 
 ```bash
 pip install -e .  # Development mode
 # OR
-pip install ./dist/hamld-0.0.1-py3-none-any.whl  # Install from build
+pip install ./dist/hamld-0.0.0-py3-none-any.whl  # Install from build
 ```
+
+High-performance decoding is recommended for Linux systems with sufficient CPU and memory.
+
+Navigate to the C++ source folder:
+
+```bash
+cd hamld/src/cpp
+```
+
+Compile and test:
+
+```bash
+bazel build //main:test_contraction_strategy
+
+./bazel-bin/main/test_contraction_strategy <PROJECT_ROOT>/hamld/data/external/epmld_experiment_data/epmld_paper_experiment/overall_performance/surface_code/X/d3_r1/detector_error_model_si1000_p10_no_stabilizer.dem
+```
+
+> **Note:** Replace `<PROJECT_ROOT>` with your project root path. Using an SSD and multi-core CPUs will significantly improve compilation and runtime performance.
+
+Install Bit Set dependencies:
+
+```bash
+cd hamld/src/cpp
+mkdir -p bit_set && cd bit_set
+
+# Manually install dependencies (automation via http_archive possible in future)
+git clone https://github.com/abseil/abseil-cpp.git
+git clone https://github.com/Tessil/robin-map.git
+git clone https://github.com/martinus/robin-hood-hashing.git
+```
+
+Compile `hamld_pybind11` (Linux example):
+
+```bash
+bazel build //main:hamld_pybind11
+
+ln -sf <PROJECT_ROOT>/hamld/src/cpp/bazel-bin/main/hamld_pybind11.so <PROJECT_ROOT>/hamld/src/hamld/hamld_pybind11.so
+```
+
+> Replace `<PROJECT_ROOT>` with your project root. High-performance CPUs and enough RAM help for faster pybind11 compilation.
+
+Enable Python API by editing `hamld/src/hamld/__init__.py` and uncommenting:
+
+```python
+from .hamld_pybind11 import HAMLDCpp_from_file
+```
+
+Follow the instructions in `HAMLD_Tutorial.ipynb` for example usage and decoder API calls.
 
 ### Verify Installation
 

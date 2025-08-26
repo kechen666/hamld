@@ -45,9 +45,9 @@ def generate_experiment_noisy_circuit(code_task, d, r, p, noise_model = "si1000"
 
 if __name__ == "__main__":
     code_tasks = ["surface_code:rotated_memory_x","surface_code:rotated_memory_z"]
-    # distances = [3, 5, 7, 9]
+    distances = [3, 5, 7, 9]
     # distances = [3, 5, 7, 9, 11, 13]
-    distances = [15, 17, 19]
+    # distances = [15, 17, 19]
     
     # distances = [3, 5, 7, 9, 11, 13, 15]
     # 固定p为10/10000，这是目前最先进超导硬件中数量级。

@@ -15,10 +15,10 @@ def generate_sample_values(input_file_path, output_file_path, shots):
 
 def main():
     code_tasks = ["surface_code:rotated_memory_x","surface_code:rotated_memory_z"]
-    # distances = [3, 5, 7, 9]
+    distances = [3, 5, 7, 9]
     # distances = [3, 5, 7, 9, 11, 13]
     
-    distances = [15, 17, 19]
+    # distances = [15, 17, 19]
     
     # 固定p为10/10000，这是目前最先进超导硬件中数量级。
     probabilities = [10]

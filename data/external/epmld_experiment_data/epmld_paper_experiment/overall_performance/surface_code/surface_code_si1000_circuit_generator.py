@@ -52,13 +52,13 @@ def replace_values_to_generator_circuit(input_file_path, output_file_path, p, r,
 
 def main():
     code_tasks = ["surface_code:rotated_memory_x","surface_code:rotated_memory_z"]
-    # distances = [3, 5, 7, 9, 11, 13]
+    distances = [3, 5, 7, 9]
     
     # 固定p为10/10000，这是目前最先进超导硬件中数量级。
     probabilities = [10]
     noise_models = ["si1000"]
     have_stabilizers = [False]
-    distances = [15, 17, 19]
+    # distances = [15, 17, 19]
     
     current_file_directory = os.path.dirname(os.path.abspath(__file__))
 

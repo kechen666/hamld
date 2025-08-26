@@ -21,8 +21,8 @@ def main():
     probabilities = [10]
     noise_models = ["si1000"]
     # 只考虑没有数据比特信息的场景
-    # have_stabilizers = [False]
-    have_stabilizers = [True]
+    have_stabilizers = [False]
+    # have_stabilizers = [True]
     
     # 采样次数，与逻辑错误率相关，至少要大于逻辑错误率的负一次方，这里取10**5
     # shots = 10**5

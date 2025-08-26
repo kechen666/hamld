@@ -22,7 +22,6 @@ dependencies = [
     "networkx",
     "matplotlib",
     "pandas",
-    "multiprocessing",
     "jupyter"
 ]
 classifiers = [
