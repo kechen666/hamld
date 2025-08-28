@@ -76,19 +76,19 @@ def decode_task(syndrome: np.ndarray[bool], decoder, output_prob=False, shared_d
     decode_time = time.perf_counter() - start_time if timing else None
     return pred, prob_dist, decode_time
 
-def approx_decode_task_cpp(syndrome: np.ndarray[bool], contractor_init_args, output_prob=False, shared_dict=None, timing=False):
-    """Decoding task for a single syndrome, used in parallel decoding."""
-    start_time = time.perf_counter() if timing else None
+# def approx_decode_task_cpp(syndrome: np.ndarray[bool], contractor_init_args, output_prob=False, shared_dict=None, timing=False):
+#     """Decoding task for a single syndrome, used in parallel decoding."""
+#     start_time = time.perf_counter() if timing else None
 
-    contractor = ApproximateContractionExecutorCpp(*contractor_init_args)
-    prob_dist = contractor.mld_contraction_no_slicing(syndrome)
-    prediction, _ = contractor.validate_logical_operator(prob_dist)
+#     contractor = ApproximateContractionExecutorCpp(*contractor_init_args)
+#     prob_dist = contractor.mld_contraction_no_slicing(syndrome)
+#     prediction, _ = contractor.validate_logical_operator(prob_dist)
 
-    pred = prediction if not output_prob else prediction
-    prob_out = prob_dist if output_prob else None
+#     pred = prediction if not output_prob else prediction
+#     prob_out = prob_dist if output_prob else None
 
-    decode_time = time.perf_counter() - start_time if timing else None
-    return pred, prob_out, decode_time
+#     decode_time = time.perf_counter() - start_time if timing else None
+#     return pred, prob_out, decode_time
 
 def decode_task_cpp(syndrome: np.ndarray[bool], contractor_init_args, output_prob=False, shared_dict=None, timing=False):
     """Decoding task for a single syndrome, used in parallel decoding."""
@@ -215,7 +215,8 @@ class HAMLD:
                     approximatestrategy = approximatestrategy,
                     approximate_param = approximate_param
                 )
-            # If you want to use C++ version, please uncomment the following code
+            # If you want to use C++ version, please uncomment the following code.
+            # 注意，相关代码需编译，近似版本的cpp实现将弃用，更加请参考cpp文件夹下，通过bazel编译的版本。
             # elif self.contraction_code == "cpp":
             #     # TODO: 待测试 - 测试 C++ 版本的近似收缩执行器
             #     # 需要验证以下内容：
@@ -757,9 +758,9 @@ class HAMLD:
         if self.contraction_code != "cpp":
             with multiprocessing.Pool(processes=num_workers) as pool:
                 results = pool.starmap(decode_task, [(syndrome, self, output_prob, None, timing) for syndrome in syndromes])
-        elif self.use_approx and self.contraction_code == "cpp":
-            with multiprocessing.Pool(processes=num_workers) as pool:
-                results = pool.starmap(approx_decode_task_cpp, [(syndrome, self.contractor_init_args, output_prob, None, timing) for syndrome in syndromes])
+        # elif self.use_approx and self.contraction_code == "cpp":
+        #     with multiprocessing.Pool(processes=num_workers) as pool:
+        #         results = pool.starmap(approx_decode_task_cpp, [(syndrome, self.contractor_init_args, output_prob, None, timing) for syndrome in syndromes])
         elif not self.use_approx and self.contraction_code == "cpp":
             with multiprocessing.Pool(processes=num_workers) as pool:
                 results = pool.starmap(decode_task_cpp, [(syndrome, self.contractor_init_args, output_prob, None, timing) for syndrome in syndromes])

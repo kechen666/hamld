@@ -2,6 +2,12 @@
 
 Several test versions and corresponding C++ versions are provided internally, allowing users to choose according to their needs.
 
+Please intall the pybind11
+
+```bash
+pip install pybind11
+```
+
 Note that the C++ versions of the contraction executors need to be compiled by the user:
 
 ```bash

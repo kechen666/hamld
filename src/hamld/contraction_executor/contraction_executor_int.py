@@ -43,7 +43,8 @@ def check_bit_value(num:int, position: int, bit_length: int, expected_value: int
     return ((num >> position) & 1) == expected_value
 
 class ContractionExecutorInt:
-    def __init__(self, detector_number: int, logical_number: int, order: List[str], sliced_hyperedges: List[str], contractable_hyperedges_weights_dict: Dict[str, Union[np.float32, np.float64, np.float128]], accuracy: str = "float64"):
+    def __init__(self, detector_number: int, logical_number: int, order: List[str], sliced_hyperedges: List[str], contractable_hyperedges_weights_dict: Dict[str, Union[np.float32, np.float64, np.float128]],
+                 accuracy: str = "float64", contract_logical_hyperedges: bool = True):
         """
         Initialize the ContractionExecutor with the given detector error model and contraction strategy.
 
@@ -62,6 +63,7 @@ class ContractionExecutorInt:
         self.order = order
         self.sliced_hyperedges = sliced_hyperedges
         self.accuracy = accuracy
+        self.contract_logical_hyperedges = contract_logical_hyperedges
         
         self._execution_contraction_time: float = 0
         self._execution_max_distribution_size: int = 0
@@ -388,22 +390,18 @@ class ContractionExecutorInt:
             contract_detector_index = int(contract_detector[1:])  # Extract the index from the detector name
             observed_detector_syndrome = int(syndrome[contract_detector_index]) # Convert boolean to int
 
-            # logger.debug(f"Processing detector {contract_detector} (index {contract_detector_index}) with observed syndrome {observed_detector_syndrome}")
-            # print("test: 1 ")
             # Contract all hyperedges connected to the current detector
             relevant_hyperedges = [
                 hyperedge for hyperedge in contractable_hyperedges_weights.keys() 
                 # if contract_detector in hyperedge.split(",")
                 if f",{contract_detector}," in f",{hyperedge},"
             ]
-            # print("test: 2 ")
             for hyperedge in relevant_hyperedges:
                 # print(f"hyperedge: {hyperedge}")
                 # Perform contraction and update the probability distribution
                 prob_dist, contractable_hyperedges_weights = self.contract_hyperedge(
                     prob_dist, contractable_hyperedges_weights, hyperedge
                 )
-            # print("test: 3 ")
             # Filter out candidates where the syndrome bit does not match the observed syndrome
             prob_dist = {
                 candidate_syndrome: prob for candidate_syndrome, prob in prob_dist.items()
@@ -411,10 +409,21 @@ class ContractionExecutorInt:
             }
 
             # Log current state after processing the detector
-            # logger.debug(f"Contraction step {contraction_step}, contract_detector: {contract_detector}")
-            # logger.debug(f"Updated prob_dist: {prob_dist}")
-            # logger.debug(f"Remaining hyperedges: {list(contractable_hyperedges_weights.keys())}")
+            logger.debug(f"Contraction step {contraction_step}, contract_detector: {contract_detector}")
+            logger.debug(f"Updated prob_dist: {prob_dist}")
+            logger.debug(f"Remaining hyperedges: {list(contractable_hyperedges_weights.keys())}")
             
+        # 如果contract_logical_hyperedges且contractable_hyperedges_weights非空
+        if self.contract_logical_hyperedges and contractable_hyperedges_weights:
+            relevant_logical_hyperedges = [hyperedge for hyperedge in contractable_hyperedges_weights.keys()]
+            for hyperedge in relevant_logical_hyperedges:
+                # Perform contraction and update the probability distribution
+                prob_dist, contractable_hyperedges_weights = self.contract_hyperedge(
+                    prob_dist, contractable_hyperedges_weights, hyperedge
+                )
+            logger.debug(f"Contraction only logical hyperedges")
+            logger.debug(f"Updated prob_dist: {prob_dist}")
+            logger.debug(f"Remaining hyperedges: {list(contractable_hyperedges_weights.keys())}")
         return prob_dist, contractable_hyperedges_weights
     
     @classmethod

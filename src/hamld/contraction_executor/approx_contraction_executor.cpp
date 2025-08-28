@@ -13,6 +13,13 @@
 
 namespace py = pybind11;
 
+// ==================================================
+// 注意：该代码将弃用，请勿在新的开发中使用
+// Note: This code is deprecated, do not use in new development
+// 后续版本将会移除该实现，请使用新的替代方案
+// This implementation will be removed in future versions, please use the new alternative
+// ==================================================
+
 // 定义四种策略的枚举类型
 enum class ApproximateStrategy {
     NODE_TOPK,
@@ -61,10 +68,11 @@ public:
                                         const std::vector<std::string>& sliced_hyperedges,
                                         const std::unordered_map<std::string, double>& contractable_hyperedges_weights_dict,
                                         const std::string& accuracy = "float64", const std::string& approximatestrategy = "node_topk",
-                                        double approximate_param = std::numeric_limits<double>::quiet_NaN())
+                                        double approximate_param = std::numeric_limits<double>::quiet_NaN(), bool contract_logical_hyperedges = true)
         : detector_number(detector_number), logical_number(logical_number), total_length(detector_number + logical_number),
           order(order), sliced_hyperedges(sliced_hyperedges), accuracy(accuracy),
           contractable_hyperedges_weights_dict(contractable_hyperedges_weights_dict),
+          contract_logical_hyperedges(contract_logical_hyperedges),
           _execution_contraction_time(0), _execution_max_distribution_size(0) {
 
         // 近似策略以及近似参数
@@ -290,6 +298,19 @@ public:
             }
         }
 
+        if (contract_logical_hyperedges && !contractable_hyperedges_weights.empty()) {
+            std::vector<std::string> relevant_logical_hyperedges;
+            for (const auto& [hyperedge, weight] : contractable_hyperedges_weights) {
+                relevant_logical_hyperedges.push_back(hyperedge);
+            }
+            // std::cout << "logical hyperedges number: " << relevant_logical_hyperedges.size() << std::endl;
+            for (const auto& hyperedge : relevant_logical_hyperedges) {
+                auto [new_prob_dist, new_weights_dict] = contract_hyperedge(prob_dist, contractable_hyperedges_weights, hyperedge);
+                prob_dist = new_prob_dist;
+                contractable_hyperedges_weights = new_weights_dict;
+            }
+        }
+
         return {prob_dist, contractable_hyperedges_weights};
     }
 
@@ -350,6 +371,7 @@ private:
     bool _is_threshold;
     std::string _approximate_position;
     double approximate_param;
+    bool contract_logical_hyperedges;
 };
 
 PYBIND11_MODULE(approx_contraction_executor_cpp, m) {

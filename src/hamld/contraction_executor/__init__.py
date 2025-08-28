@@ -1,7 +1,7 @@
 # src/hamld/contraction_executor/__init__.py
 
 from .approx_contraction_executor import ApproximateContractionExecutor
-# if you want to use the C++ version, please uncomment the lines below and need to compiler it.
+# if you want to use the C++ version, please uncomment the lines below and need to compiler it. 
 # from .approx_contraction_executor_cpp import ApproximateContractionExecutorCpp
 from .approx_contraction_executor_cpp_py import ApproximatePyContractionExecutorCpp
 from .contraction_executor import ContractionExecutor

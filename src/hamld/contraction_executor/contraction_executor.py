@@ -45,7 +45,7 @@ def flip_bits(binary_tuple: Tuple[bool], hyperedge: Tuple[str], detector_number:
     return tuple(binary_list)
 
 class ContractionExecutor:
-    def __init__(self, detector_error_model: stim.DetectorErrorModel, contraction_strategy: ContractionStrategy, use_decimal: bool = False):
+    def __init__(self, detector_error_model: stim.DetectorErrorModel, contraction_strategy: ContractionStrategy, use_decimal: bool = False, contract_logical_hyperedges: bool = True):
         """
         Initialize the ContractionExecutor with the given detector error model and contraction strategy.
 
@@ -60,6 +60,7 @@ class ContractionExecutor:
         self.order = contraction_strategy.order
         self.sliced_hyperedges = contraction_strategy.sliced_hyperedges
         self.use_decimal = use_decimal
+        self.contract_logical_hyperedges: bool = contract_logical_hyperedges
         
         self.max_prob_dist_size: int = 0
         
@@ -421,7 +422,18 @@ class ContractionExecutor:
             logger.debug(f"Contraction step {contraction_step}, contract_detector: {contract_detector}")
             logger.debug(f"Updated prob_dist: {prob_dist}")
             logger.debug(f"Remaining hyperedges: {list(contractable_hyperedges_weights.keys())}")
-            
+        
+        # 如果contract_logical_hyperedges且contractable_hyperedges_weights非空
+        if self.contract_logical_hyperedges and contractable_hyperedges_weights:
+            relevant_logical_hyperedges = [hyperedge for hyperedge in contractable_hyperedges_weights.keys()]
+            for hyperedge in relevant_logical_hyperedges:
+                # Perform contraction and update the probability distribution
+                prob_dist, contractable_hyperedges_weights = self.contract_hyperedge(
+                    prob_dist, contractable_hyperedges_weights, hyperedge
+                )
+            logger.debug(f"Contraction only logical hyperedges")
+            logger.debug(f"Updated prob_dist: {prob_dist}")
+            logger.debug(f"Remaining hyperedges: {list(contractable_hyperedges_weights.keys())}")
         return prob_dist, contractable_hyperedges_weights
     
     @classmethod

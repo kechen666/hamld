@@ -24,6 +24,7 @@ from .sample_decoder import Sample_Decoder
 from .circuit_generator import CircuitGenerator
 
 # C++ version: if you want to use it, please uncomment the lines below.
+# 如果你希望使用C++的高性能版本，请参考cpp文件，将其编译并放在在当前文件夹下，同时取消下述代码的注释。
 # from .hamld_pybind11 import HAMLDCpp_from_file
 
 # 设置包的版本

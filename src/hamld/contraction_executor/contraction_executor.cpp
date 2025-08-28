@@ -44,9 +44,9 @@ public:
     ContractionExecutorCpp(int detector_number, int logical_number, const std::vector<std::string>& order,
                            const std::vector<std::string>& sliced_hyperedges,
                            const std::unordered_map<std::string, double>& contractable_hyperedges_weights_dict,
-                           const std::string& accuracy = "float64")
+                           const std::string& accuracy = "float64", const bool& contract_logical_hyperedges = true)
         : detector_number(detector_number), logical_number(logical_number), total_length(detector_number + logical_number),
-          order(order), sliced_hyperedges(sliced_hyperedges), accuracy(accuracy),
+          order(order), sliced_hyperedges(sliced_hyperedges), accuracy(accuracy), contract_logical_hyperedges(contract_logical_hyperedges),
           contractable_hyperedges_weights_dict(contractable_hyperedges_weights_dict),
           _execution_contraction_time(0), _execution_max_distribution_size(0) {}
 
@@ -223,6 +223,19 @@ public:
             prob_dist = new_prob_dist;
         }
 
+        if (contract_logical_hyperedges && !contractable_hyperedges_weights.empty()) {
+            std::vector<std::string> relevant_logical_hyperedges;
+            for (const auto& [hyperedge, weight] : contractable_hyperedges_weights) {
+                relevant_logical_hyperedges.push_back(hyperedge);
+            }
+            // std::cout << "logical hyperedges number: " << relevant_logical_hyperedges.size() << std::endl;
+            for (const auto& hyperedge : relevant_logical_hyperedges) {
+                auto [new_prob_dist, new_weights_dict] = contract_hyperedge(prob_dist, contractable_hyperedges_weights, hyperedge);
+                prob_dist = new_prob_dist;
+                contractable_hyperedges_weights = new_weights_dict;
+            }
+        }
+
         return {prob_dist, contractable_hyperedges_weights};
     }
 
@@ -267,6 +280,7 @@ private:
     std::vector<std::string> order;
     std::vector<std::string> sliced_hyperedges;
     std::string accuracy;
+    bool contract_logical_hyperedges;
     std::unordered_map<std::string, double> contractable_hyperedges_weights_dict;
     double _execution_contraction_time;
     int _execution_max_distribution_size;

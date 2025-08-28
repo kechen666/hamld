@@ -67,7 +67,8 @@ class ApproximatePyContractionExecutorCpp:
                  sliced_hyperedges: List[str],
                  contractable_hyperedges_weights_dict: Dict[str, Union[np.float32, np.float64, np.float128]],
                  accuracy: str = "float64", approximatestrategy: str = "node_topk",
-                 approximate_param: Optional[int | float] = None):
+                 approximate_param: Optional[int | float] = None,
+                 contract_logical_hyperedges: bool = True):
         """
         初始化 ContractionExecutor 对象。
 
@@ -87,6 +88,7 @@ class ApproximatePyContractionExecutorCpp:
         self.order = order
         self.sliced_hyperedges = sliced_hyperedges
         self.accuracy = accuracy
+        self.contract_logical_hyperedges = contract_logical_hyperedges
         
         self._execution_contraction_time: float = 0
         self._execution_max_distribution_size: int = 0
@@ -411,13 +413,24 @@ class ApproximatePyContractionExecutorCpp:
             }
             
             if self._approximate_position == "node":
-                # logger.info(f"Before approximate_distribution, prob_dist's shape: {len(prob_dist)}")
                 prob_dist = self.approximate_distribution(prob_dist)
                 
             # Log current state after processing the detector
-            # logger.debug(f"Contraction step {contraction_step}, contract_detector: {contract_detector}")
-            # logger.debug(f"Updated prob_dist: {prob_dist}")
-            # logger.debug(f"Remaining hyperedges: {list(contractable_hyperedges_weights.keys())}")
+            logger.debug(f"Contraction step {contraction_step}, contract_detector: {contract_detector}")
+            logger.debug(f"Updated prob_dist: {prob_dist}")
+            logger.debug(f"Remaining hyperedges: {list(contractable_hyperedges_weights.keys())}")
+            
+        # 如果contract_logical_hyperedges且contractable_hyperedges_weights非空
+        if self.contract_logical_hyperedges and contractable_hyperedges_weights:
+            relevant_logical_hyperedges = [hyperedge for hyperedge in contractable_hyperedges_weights.keys()]
+            for hyperedge in relevant_logical_hyperedges:
+                # Perform contraction and update the probability distribution
+                prob_dist, contractable_hyperedges_weights = self.contract_hyperedge(
+                    prob_dist, contractable_hyperedges_weights, hyperedge
+                )
+            logger.debug(f"Contraction only logical hyperedges")
+            logger.debug(f"Updated prob_dist: {prob_dist}")
+            logger.debug(f"Remaining hyperedges: {list(contractable_hyperedges_weights.keys())}")
         return prob_dist, contractable_hyperedges_weights
 
     @classmethod

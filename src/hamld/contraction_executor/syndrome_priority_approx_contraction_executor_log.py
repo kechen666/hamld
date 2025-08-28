@@ -145,7 +145,7 @@ class SyndromePriorityApproximateContractionExecutorLog:
                  approximate_param: Optional[int | float] = None,
                  hyperedge_cache: Optional[Dict] = None, relevant_hyperedge_cache: Optional[Dict] = None, hypergraph = None,
                  priority: int = 1, priority_topk: int = 10,
-                 gamma = 23):
+                 gamma = 23, contract_logical_hyperedges: bool = True):
         """
         初始化 ContractionExecutor 对象。
 
@@ -169,6 +169,7 @@ class SyndromePriorityApproximateContractionExecutorLog:
         self.priority_topk = priority_topk
         self.min_hamming_weight = None
         self.gamma = gamma
+        self.contract_logical_hyperedges = contract_logical_hyperedges
         
         # sub
         self.flipped_detector_set: set = None
@@ -544,9 +545,21 @@ class SyndromePriorityApproximateContractionExecutorLog:
                 prob_dist = self.approximate_distribution(prob_dist, str_syndrome)
                 
             # Log current state after processing the detector
-            # logger.debug(f"Contraction step {contraction_step}, contract_detector: {contract_detector}")
-            # logger.debug(f"Updated prob_dist: {prob_dist}")
-            # logger.debug(f"Remaining hyperedges: {list(contractable_hyperedges_weights.keys())}")
+            logger.debug(f"Contraction step {contraction_step}, contract_detector: {contract_detector}")
+            logger.debug(f"Updated prob_dist: {prob_dist}")
+            logger.debug(f"Remaining hyperedges: {list(contractable_hyperedges_weights.keys())}")
+        
+        # 如果contract_logical_hyperedges且contractable_hyperedges_weights非空
+        if self.contract_logical_hyperedges and contractable_hyperedges_weights:
+            relevant_logical_hyperedges = [hyperedge for hyperedge in contractable_hyperedges_weights.keys()]
+            for hyperedge in relevant_logical_hyperedges:
+                # Perform contraction and update the probability distribution
+                prob_dist, contractable_hyperedges_weights = self.contract_hyperedge(
+                    prob_dist, contractable_hyperedges_weights, hyperedge, str_syndrome
+                )
+            logger.debug(f"Contraction only logical hyperedges")
+            logger.debug(f"Updated prob_dist: {prob_dist}")
+            logger.debug(f"Remaining hyperedges: {list(contractable_hyperedges_weights.keys())}")
         return prob_dist, contractable_hyperedges_weights
 
     # @classmethod
