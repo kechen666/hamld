@@ -197,7 +197,7 @@ HAMLD features a dedicated mechanism for handling **measurement bias**, i.e., as
 <a id="4"></a>
 
 ## TODO
-* Implement the core code in C++. (To be completed)
+<!-- * Implement the core code in C++. (To be completed) -->
 
 * Matrixize the calculation process and add parallel and vectorized calculations to achieve acceleration. (To be completed)
 
