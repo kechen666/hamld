@@ -69,7 +69,8 @@ ApproximateContractionExecutor::ApproximateContractionExecutor(
     bool use_heuristic,
     double alpha,
     bool openmp,
-    int openmp_num_threads
+    int openmp_num_threads,
+    bool contract_logical_hyperedges
 ) : detector_number_(detector_number),
     logical_number_(logical_number),
     total_length_(detector_number + logical_number),
@@ -82,6 +83,7 @@ ApproximateContractionExecutor::ApproximateContractionExecutor(
     alpha_(alpha),
     openmp_(openmp),
     openmp_num_threads_(openmp_num_threads),
+    contract_logical_hyperedges_(contract_logical_hyperedges),
     order_({}),
     relevant_hyperedge_cache_({}),
     execution_contraction_time_(0.0),
@@ -530,6 +532,17 @@ ApproximateContractionExecutor::single_node_online_mld_contraction(
 
         if (approximate_position_ == "node") {
             approximate_distribution(prob_dist);
+        }
+    }
+
+    if (contract_logical_hyperedges_ && !contractable_weights.empty()) {
+        std::vector<std::string> relevant_logical_hyperedges;
+        for (const auto& [hyperedge, weight] : contractable_weights) {
+            relevant_logical_hyperedges.push_back(hyperedge);
+        }
+        // std::cout << "logical hyperedges number: " << relevant_logical_hyperedges.size() << std::endl;
+        for (const auto& hyperedge : relevant_logical_hyperedges) {
+            contract_hyperedge(prob_dist, contractable_weights, hyperedge);
         }
     }
     

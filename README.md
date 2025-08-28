@@ -182,9 +182,6 @@ In ancilla-only syndrome decoding (non-destructive error correction):
 * For surface codes, HAMLD reaches **near-optimal decoding performance**, close to full MLD
 * (Note: For QLDPC codes, full MLD baselines are not well-defined, so no direct comparison is made.)
 
-### 3. Adaptability to Biased Measurement Noise
-
-HAMLD features a dedicated mechanism for handling **measurement bias**, i.e., asymmetric 0/1 measurement error rates—a feature lacking in many existing decoders and even in `stim`.
 
 ### Additional Tools
 

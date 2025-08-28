@@ -106,7 +106,7 @@ std::unordered_map<std::string, double> DetectorErrorModelHypergraph::get_hypere
 }
 
 DetectorErrorModelHypergraph DetectorErrorModelHypergraph::get_new_priority_sub_hypergraph(
-    std::vector<std::string>& selected_nodes, int priority, int topk) {
+    std::vector<std::string>& selected_nodes, int priority, int topk, bool contract_logical_hyperedges = true) {
 
     // 预先用unordered_set快速判断
     std::unordered_set<std::string> d_nodes;
@@ -122,6 +122,7 @@ DetectorErrorModelHypergraph DetectorErrorModelHypergraph::get_new_priority_sub_
 
         int match = 0, mismatch = 0;
         for (const auto& n : edge) {
+            // match and mismatch only conside about D, not about L.
             if (n[0] != 'D') continue;
             if (d_nodes.count(n)) {
                 ++match;
@@ -135,10 +136,13 @@ DetectorErrorModelHypergraph DetectorErrorModelHypergraph::get_new_priority_sub_
         }
         if (match <= 0) continue;
 
-        // 直接导致逻辑错误的情况也是非常值得。
-        if (match == 0 && mismatch == 0) continue;
+        // Assign priority to hyperedges based on matching criteria
+        // For critical hyperedges (perfect matches or full detector coverage), assign higher priority
+        // General case: use difference between matches and mismatches
+        if (!contract_logical_hyperedges && match == 0 && mismatch == 0) continue;
 
-        int edge_priority = (mismatch == 0 || match == static_cast<int>(d_nodes.size())) ?
+        // some very important hyperedges, we give more priority. general is use match - mismatch.
+        int edge_priority = ((match != 0 && mismatch == 0) || match == static_cast<int>(d_nodes.size())) ?
                             static_cast<int>(d_nodes.size()) + match :
                             match - mismatch;
 
@@ -152,16 +156,7 @@ DetectorErrorModelHypergraph DetectorErrorModelHypergraph::get_new_priority_sub_
             return std::get<2>(a) > std::get<2>(b);
         return std::get<1>(a) > std::get<1>(b);
     };
-    // if (topk != -1 && static_cast<int>(filtered_edge_indices.size()) > topk) {
-    //     std::partial_sort(filtered_edge_indices.begin(),
-    //                     filtered_edge_indices.begin() + topk,
-    //                     filtered_edge_indices.end(),
-    //                     comp);
 
-    //     filtered_edge_indices.resize(topk);
-    // } else {
-    //     std::sort(filtered_edge_indices.begin(), filtered_edge_indices.end(), comp);
-    // }
     if (topk != -1 && static_cast<int>(filtered_edge_indices.size()) > topk) {
         std::nth_element(filtered_edge_indices.begin(),
                         filtered_edge_indices.begin() + topk,

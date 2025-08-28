@@ -75,7 +75,8 @@ public:
         bool use_heuristic = true,
         double alpha = 0.05,
         bool openmp = false,
-        int openmp_num_threads = 1
+        int openmp_num_threads = 1, 
+        bool contract_logical_hyperedges = true
     );
 
     // 使用 bitset 版本的概率分布
@@ -108,6 +109,8 @@ private:
     const double alpha_;        // 启发式强度
     const bool openmp_;
     const int openmp_num_threads_;
+
+    const bool contract_logical_hyperedges_;
 
     std::vector<std::string> order_;
     boost::dynamic_bitset<> target_syndrome_; // 使用 bitset 存储目标错误 syndrome
